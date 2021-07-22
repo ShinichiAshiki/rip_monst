@@ -16,7 +16,7 @@ dicSuitableTbl = {
 #IPython.display.clear_output()
 res = requests.get(scheduleURL)
 res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "lxml")
+soup = bs4.BeautifulSoup(res.text, "html.parser")
 elmSches = soup.select('#monst_schedule_wapper td')
 
 for i, elmSche in enumerate(elmSches, 0):
@@ -27,7 +27,7 @@ for i, elmSche in enumerate(elmSches, 0):
         
 res = requests.get(suitableURL)
 res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "lxml")
+soup = bs4.BeautifulSoup(res.text, "html.parser")
 tmps = soup.select(".post-content")
 for i, tmp in enumerate(tmps[0].contents, 0):
     if tmp.name == "h3":
@@ -40,7 +40,7 @@ for i, tmp in enumerate(tmps[0].contents, 0):
 for keys in dicSuitableTbl.keys():
     arryMsg.append("----------" + keys + "適正----------")
     table = dicSuitableTbl[keys]
-    for i in bs4.BeautifulSoup(table, "lxml").select("td"):
+    for i in bs4.BeautifulSoup(table, "html.parser").select("td"):
         monstName = i.contents[0].text.replace("\n","")
         if "(獣神化" in i.text:
             arryMsg.append(monstName)
