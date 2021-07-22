@@ -4,7 +4,7 @@
 name: advent alert
 on:
   schedule:
-    - cron:  '* * * * *'
+    - cron:  '0 23 * * *'
 
 jobs:
   build:
