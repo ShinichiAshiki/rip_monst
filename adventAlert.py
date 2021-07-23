@@ -13,11 +13,12 @@ dicSuitableTbl = {
     "Aランク" : Atable,
     "Bランク" : Btable,
 }
+monitorList = ["(獣神化", "(進化", "(神化", "(星5"]
 #IPython.display.clear_output()
 res = requests.get(scheduleURL)
 res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "html.parser")
-elmSches = soup.select('#monst_schedule_wapper td')
+soupAdvent = bs4.BeautifulSoup(res.text, "html.parser")
+elmSches = soupAdvent.select('#monst_schedule_wapper td')
 
 for i, elmSche in enumerate(elmSches, 0):
     if "轟絶" in elmSche.text:
@@ -25,31 +26,28 @@ for i, elmSche in enumerate(elmSches, 0):
         arryMsg.append("攻略サイト → " + elmSche.contents[0].attrs['href'])
         suitableURL = elmSche.contents[0].attrs['href']
         
-res = requests.get(suitableURL)
-res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "html.parser")
-tmps = soup.select(".post-content")
-for i, tmp in enumerate(tmps[0].contents, 0):
-    if tmp.name == "h3":
-        if list(dicSuitableTbl.keys())[0] in tmp.text:
-            dicSuitableTbl[list(dicSuitableTbl.keys())[0]] = str(tmps[0].contents[i + 2])
-        if list(dicSuitableTbl.keys())[1] in tmp.text:
-            dicSuitableTbl[list(dicSuitableTbl.keys())[1]] = str(tmps[0].contents[i + 2])
-        if list(dicSuitableTbl.keys())[2] in tmp.text:
-            dicSuitableTbl[list(dicSuitableTbl.keys())[2]] = str(tmps[0].contents[i + 2])
-for keys in dicSuitableTbl.keys():
-    arryMsg.append("----------" + keys + "適正----------")
-    table = dicSuitableTbl[keys]
-    for i in bs4.BeautifulSoup(table, "html.parser").select("td"):
-        monstName = i.contents[0].text.replace("\n","")
-        if "(獣神化" in i.text:
-            arryMsg.append(monstName)
-        elif "(進化" in i.text:
-            arryMsg.append(monstName)
-        elif "(神化" in i.text:
-            arryMsg.append(monstName)
-        elif "(星5" in i.text:
-            arryMsg.append(monstName)
+        res = requests.get(suitableURL)
+        res.raise_for_status()
+        soupSuitable = bs4.BeautifulSoup(res.text, "html.parser")
+        tmps = soupSuitable.select(".post-content")
+        for i, tmp in enumerate(tmps[0].contents, 0):
+            if tmp.name == "h3":
+                if list(dicSuitableTbl.keys())[0] in tmp.text:
+                    dicSuitableTbl[list(dicSuitableTbl.keys())[0]] = str(tmps[0].contents[i + 2])
+                if list(dicSuitableTbl.keys())[1] in tmp.text:
+                    dicSuitableTbl[list(dicSuitableTbl.keys())[1]] = str(tmps[0].contents[i + 2])
+                if list(dicSuitableTbl.keys())[2] in tmp.text:
+                    dicSuitableTbl[list(dicSuitableTbl.keys())[2]] = str(tmps[0].contents[i + 2])
+        for keys in dicSuitableTbl.keys():
+            arryMsg.append("----------" + keys + "適正----------")
+            table = dicSuitableTbl[keys]
+            for i in bs4.BeautifulSoup(table, "html.parser").select("td"):
+                try:
+                    monstName = i.contents[0].text.replace("\n","")
+                    if any([x in i.text for x in monitorList]):
+                        arryMsg.append(monstName)
+                except:
+                    pass
 
 messages = linebot.models.TextSendMessage(text = "\n".join(arryMsg))
 linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
