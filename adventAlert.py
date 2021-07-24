@@ -22,7 +22,7 @@ elmSches = soupAdvent.select('#monst_schedule_wapper td')
 
 for i, elmSche in enumerate(elmSches, 0):
     if "轟絶" in elmSche.text:
-        arryMsg.append(elmSches[i - 1].text + " : " + elmSche.text)
+        arryMsg.append("★[" + elmSches[i - 1].text + "]" + " : " + elmSche.text)
         arryMsg.append("攻略サイト → " + elmSche.contents[0].attrs['href'])
         suitableURL = elmSche.contents[0].attrs['href']
         
