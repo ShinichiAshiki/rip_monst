@@ -39,12 +39,8 @@ try:
                 chance = dicChanceKinds[dickey]
                 break
         if chance in mntrList:
-            preChance = chance
             lineMsg = chance + "だお\n"
-            for elmRate in elmRates:
-                lineMsg += elmRate.text.replace('\n','').replace('確率','確率：')
-                lineMsg += "\n"
-            lineMsg = lineMsg[0:len(lineMsg)-1]
+            lineMsg += elmRates[2].text.replace('\n','')
             messages = linebot.models.TextSendMessage(text = lineMsg)
             linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
         else:
