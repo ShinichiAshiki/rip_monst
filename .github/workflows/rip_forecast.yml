@@ -22,4 +22,4 @@ jobs:
         pip install -r req_forecast.txt
     - name: Run script
       run: |
-        python monitorForcast.py
+        python forcast.py
