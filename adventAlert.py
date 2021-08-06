@@ -58,4 +58,4 @@ for i, elmScheTmrw in enumerate(elmScheTmrws[1:len(elmScheTmrws)-1], 1):
         arryMsg.append("★[" + elmScheTmrws[i - 1].text +"]" + elmScheTmrw.text.replace("[轟絶]","").replace("轟絶・究極 / 轟絶・極",""))
 #LINE通知
 messages = linebot.models.TextSendMessage(text = "\n".join(arryMsg))
-#linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
+linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
