@@ -23,7 +23,7 @@ elmSches = soupAdvent.select('#monst_schedule_wapper td')
 for i, elmSche in enumerate(elmSches, 0):
     if "轟絶" in elmSche.text:
         suitableURL = elmSche.contents[0].attrs['href']
-        arryMsg.append("★[" + elmSches[i - 1].text + "]" + " : " + elmSche.text)
+        arryMsg.append("★[" + elmSches[i - 1].text + "]" + elmSche.text)
         arryMsg.append("攻略サイト → " + suitableURL)
         break
         
@@ -50,10 +50,12 @@ for keys in dicSuitableTbl.keys():
         except:
             pass
 #明日以降
-arryMsg.append("明日以降の轟絶↓")
+arryMsg.append("--------明日以降の轟絶---------")
+arryMsg.append("明日以降の轟絶")
 elmScheTmrws = soupAdvent.select('table td')
-for elmScheTmrw in elmScheTmrws:
+for i, elmScheTmrw in enumerate(elmScheTmrws[1:len(elmScheTmrws)-1], 1):
     if "轟絶" in elmScheTmrw.text:
-        arryMsg.append(elmScheTmrw.text)
+        arryMsg.append("★[" + elmScheTmrws[i - 1].text +"]" + elmScheTmrw.text)
+#LINE通知
 messages = linebot.models.TextSendMessage(text = "\n".join(arryMsg))
 linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
