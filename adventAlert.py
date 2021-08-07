@@ -55,8 +55,7 @@ except:
     arryMsg.append("本日は轟絶はないかもしれないヨ")
     j = 0
 #明日以降
-arryMsg.append("--------明日以降の轟絶---------")
-arryMsg.append("明日以降の轟絶")
+arryMsg.append("-----明日以降の轟絶------")
 elmScheTmrws = soupAdvent.select('table td')
 for i, elmScheTmrw in enumerate(elmScheTmrws[j:len(elmScheTmrws)-1], j):
     if "轟絶" in elmScheTmrw.text:
