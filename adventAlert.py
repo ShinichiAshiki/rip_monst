@@ -50,16 +50,17 @@ try:
                     arryMsg.append(monstName)
             except:
                 pass
-    j = 1
 except:
     arryMsg.append("本日は轟絶はないかもしれないヨ")
-    j = 0
 #明日以降
+flgTmrw = False
 arryMsg.append("-----明日以降の轟絶------")
 elmScheTmrws = soupAdvent.select('table td')
-for i, elmScheTmrw in enumerate(elmScheTmrws[j:len(elmScheTmrws)-1], j):
+for i, elmScheTmrw in enumerate(elmScheTmrws, 0):
     if "轟絶" in elmScheTmrw.text:
-        arryMsg.append("★[" + elmScheTmrws[i - 1].text +"]" + elmScheTmrw.text.replace("[轟絶]","").replace("轟絶・究極 / 轟絶・極",""))
+        if flgTmrw:
+            arryMsg.append("★[" + elmScheTmrws[i - 1].text +"]" + elmScheTmrw.text.replace("[轟絶]","").replace("轟絶・究極 / 轟絶・極",""))
+        flgTmrw = True
 #LINE通知
 messages = linebot.models.TextSendMessage(text = "\n".join(arryMsg))
 linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
