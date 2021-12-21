@@ -26,32 +26,7 @@ for i, elmSche in enumerate(elmSches, 0):
         arryMsg.append("★[" + elmSches[i - 1].text + "]" + elmSche.text.replace("[轟絶]","").replace("轟絶・究極 / 轟絶・極",""))
         arryMsg.append("攻略サイト → " + suitableURL)
         break
-
-try:
-    res = requests.get(suitableURL)
-    res.raise_for_status()
-    soupSuitable = bs4.BeautifulSoup(res.text, "html.parser")
-    tmps = soupSuitable.select(".post-content")
-    for i, tmp in enumerate(tmps[0].contents, 0):
-        if tmp.name == "h3":
-            if list(dicSuitableTbl.keys())[0] in tmp.text:
-                dicSuitableTbl[list(dicSuitableTbl.keys())[0]] = str(tmps[0].contents[i + 2])
-            if list(dicSuitableTbl.keys())[1] in tmp.text:
-                dicSuitableTbl[list(dicSuitableTbl.keys())[1]] = str(tmps[0].contents[i + 2])
-            if list(dicSuitableTbl.keys())[2] in tmp.text:
-                dicSuitableTbl[list(dicSuitableTbl.keys())[2]] = str(tmps[0].contents[i + 2])
-    for keys in dicSuitableTbl.keys():
-        arryMsg.append("----------" + keys + "適正----------")
-        table = dicSuitableTbl[keys]
-        for i in bs4.BeautifulSoup(table, "html.parser").select("td"):
-            try:
-                monstName = i.contents[0].text.replace("\n","")
-                if any([x in i.text for x in monitorList]):
-                    arryMsg.append(monstName)
-            except:
-                pass
-except:
-    arryMsg.append("本日は轟絶はないかもしれないヨ")
+        
 #明日以降
 flgTmrw = False
 arryMsg.append("-----明日以降の轟絶------")
