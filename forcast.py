@@ -1,51 +1,39 @@
-import requests, sys
+import requests
 import bs4
-import IPython
 import linebot
+import datetime
+nowTime = datetime.datetime.now()
 
-##initialize
 CAT = "h2OgOT2rNaQ/fcyqTG3kCdOVvpqTl3rjtp5Yy2KIA3Ctm0r6S9Fziz8XrklAZBN1ak67aD92RoXeHIdCHN2UFtDjir3meJRtDlN4c+WRQ3G9HwGODRmGI6dSHzilA/AExxVQG44EiWSilgkVhJNDwwdB04t89/1O/w1cDnyilFU="
 CHANNEL_ID = "Cc2219c913ebb8b515c11f45a3cc8e4cd"
-myID = "U6b6d2104d9f00e1a0bcca6a2d31e7ead"
-
-gachaforcastURL = "http://monstgacha-yosou.xyz/linemulti/#"
-dicChanceKinds = {
-    "content01":"極小",
-    "content02":"小チャンス",
-    "content03":"中チャンス",
-    "content04":"大チャンス",
-    "content05":"超絶チャンス",
-    "content06":"超絶大チャンス"
-}
-mntrList = [
-    "超絶大チャンス"
-]
-##monitor
-IPython.display.clear_output()
-try:
-    res = requests.get(gachaforcastURL)
-    res.raise_for_status()
-    soupTgtForecast = bs4.BeautifulSoup(res.text, "html.parser")
-    elmImg = soupTgtForecast.select_one('img.img-responsive.animated')
-    elmRates = soupTgtForecast.select('tr')
-    if (elmImg == None) or (elmRates == None):
-        messages = linebot.models.TextSendMessage(text = "サイトの仕様が変わった可能性があります.")
-        linebot.LineBotApi(CAT).push_message(myID, messages = messages)
-    else:
-        chance = ""
-        for dickey in dicChanceKinds.keys():
-            if dickey in elmImg.attrs['src']:
-                chance = dicChanceKinds[dickey]
-                break
-        if chance in mntrList:
-            if float(elmRates[2].text.replace("\n","").replace("5分間の★5確率","").replace("％",""))>=30.0:
-                lineMsg = chance + "です\n"
-                lineMsg += elmRates[2].text.replace('\n','')
-                messages = linebot.models.TextSendMessage(text = lineMsg)
-                linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
-        else:
-            print( chance + "でした" )
-except:
-    print(sys.exc_info())
-    messages = linebot.models.TextSendMessage(text = "ミスりました.")
-    linebot.LineBotApi(CAT).push_message(myID, messages = messages)
+lineMsg = ""
+arryMsg = []
+scheduleURL = "https://appmedia.jp/monst/47840"
+res = requests.get(scheduleURL)
+soupAdvent = bs4.BeautifulSoup(res.text, "html.parser")
+lineMsg = ""
+def f_getinfo(tgtMonth, tgtDay):
+    global lineMsg
+    month = "00" + tgtMonth
+    month = month[len(month)-2:len(month)]
+    month = month[0] + " " + month[1]
+    day = "00" + tgtDay
+    day = day[len(day)-2:len(day)]
+    monthDay = month + day
+    try:
+        elmSches = soupAdvent.select("#\\3" + monthDay)# 先頭に「#\\3」を入れてエスケープだが最初の1文字はくっつける
+        elmGous = elmSches[0].select("td")
+        lineMsg = lineMsg + "--------" + tgtMonth + "月" + tgtDay + "日" + "--------" + "\n"
+        for elmGou in elmGous:
+            if "轟絶" in elmGou.text:
+                gouInfo = elmGou.previous_sibling.previous_sibling.text + "：" + elmGou.text
+                gouInfo = gouInfo.replace("轟絶","").replace("・","").replace("[]","").replace("究極","").replace("極","").replace("/","")
+                lineMsg = lineMsg + "・" + gouInfo + "\n"
+    except:
+        lineMsg = lineMsg + tgtMonth + "月" + tgtDay + "日の轟絶はありません\n"
+        
+for i in range(8):
+    f_getinfo(str(nowTime.month), str(nowTime.day + i))
+# LINE通知
+messages = linebot.models.TextSendMessage(text = lineMsg)
+linebot.LineBotApi(CAT).push_message(CHANNEL_ID, messages = messages)
