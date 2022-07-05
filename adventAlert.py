@@ -32,7 +32,7 @@ def f_getinfo(tgtMonth, tgtDay):
     except:
         lineMsg = lineMsg + tgtMonth + "月" + tgtDay + "日の轟絶はありません\n"
         
-for i in range(8):
+for i in range(1,8):
     f_getinfo(str(nowTime.month), str(nowTime.day + i))
 # LINE通知
 messages = linebot.models.TextSendMessage(text = lineMsg)
